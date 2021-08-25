@@ -39,12 +39,15 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
         {(props) => (
           <Form>
             <Field name="title">
-              {({ field, form }: any) => (
-                <FormControl isRequired>
-                  <FormLabel>Title</FormLabel>
-                  <Input {...field} />
-                </FormControl>
-              )}
+              {({ field, form }: any) => {
+                console.log(field);
+                return (
+                  <FormControl isRequired>
+                    <FormLabel>Title</FormLabel>
+                    <Input {...field} />
+                  </FormControl>
+                );
+              }}
             </Field>
 
             <FormLabel mt="2">Tags</FormLabel>
@@ -70,7 +73,13 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
               {tags.map((tag, i) => (
                 <Tag key={i} size="md" borderRadius="full">
                   <TagLabel>{tag}</TagLabel>
-                  <TagCloseButton onClick={(joe) => console.log(joe)} />
+                  <TagCloseButton
+                    onClick={() => {
+                      const newTags = [...tags];
+                      newTags.splice(i, 1);
+                      setTags(newTags);
+                    }}
+                  />
                 </Tag>
               ))}
             </Stack>
