@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { TodoItem } from "../types/types";
 import { Formik, Form, Field } from "formik";
 import {
@@ -13,7 +13,15 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
-const TodoForm: React.FC = () => {
+interface TodoFormProps {
+  todos: TodoItem[];
+  setTodos: React.Dispatch<React.SetStateAction<TodoItem[]>>;
+}
+
+const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+
   return (
     <Box
       w={1000}
@@ -40,13 +48,31 @@ const TodoForm: React.FC = () => {
             </Field>
 
             <FormLabel mt="2">Tags</FormLabel>
-            <Input />
+            <Stack direction="row">
+              <Input
+                value={tagInput}
+                onChange={(event) => setTagInput(event.target.value)}
+                placeholder="Add a tag"
+              />
+              <Button
+                onClick={() => {
+                  const newTags = [...tags];
+                  newTags.push(tagInput);
+                  setTags(newTags);
+                  setTagInput("");
+                }}
+              >
+                Add
+              </Button>
+            </Stack>
 
             <Stack spacing={4} direction="row">
-              <Tag size="md" borderRadius="full">
-                <TagLabel>Tag</TagLabel>
-                <TagCloseButton onClick={(joe) => console.log(joe)} />
-              </Tag>
+              {tags.map((tag, i) => (
+                <Tag key={i} size="md" borderRadius="full">
+                  <TagLabel>{tag}</TagLabel>
+                  <TagCloseButton onClick={(joe) => console.log(joe)} />
+                </Tag>
+              ))}
             </Stack>
             <Field name="dueDate">
               {({ field, form }: any) => (
@@ -56,7 +82,7 @@ const TodoForm: React.FC = () => {
                 </FormControl>
               )}
             </Field>
-            <Button type="submit">Add</Button>
+            <Button type="submit">Submit</Button>
           </Form>
         )}
       </Formik>

@@ -10,9 +10,9 @@ function App() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   return (
     <Center flexDir="column">
-      <TodoForm />
+      <TodoForm todos={todos} setTodos={setTodos} />
       <Sort />
-      <TodoList />
+      <TodoList todos={todos} />
     </Center>
   );
 }
