@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import { TodoItem } from "../types/types";
 import { Formik, Form, Field, FieldInputProps, FormikState } from "formik";
+import DatePicker from "react-datepicker";
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   TagCloseButton,
   TagLabel,
   Stack,
-  FormErrorMessage,
 } from "@chakra-ui/react";
 
 interface TodoFormProps {
@@ -19,16 +19,23 @@ interface TodoFormProps {
   setTodos: React.Dispatch<React.SetStateAction<TodoItem[]>>;
 }
 
+const DateInput = forwardRef(
+  ({ onClick, value, onChange }: any, ref: React.Ref<HTMLInputElement>) => (
+    <Input
+      ref={ref}
+      id="dueDate"
+      value={value}
+      onChange={onChange}
+      onClick={onClick}
+      placeholder="MM/DD/YYYY"
+    />
+  )
+);
+
 const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
   const [tagInput, setTagInput] = useState("");
+  const [dateInput, setDateInput] = useState(new Date());
   const [tags, setTags] = useState<string[]>([]);
-
-  const validateDate = (value: string) => {
-    const regExp = /(0[1-9]|1[012])[\/](0[1-9]|[12][0-9]|3[01])[\/](19|20)\d\d/;
-    if (!regExp.test(value)) {
-      return "Please enter a valid date in the format MM/DD/YYYY";
-    }
-  };
 
   const addTag = () => {
     const newTags = [...tags];
@@ -96,28 +103,16 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
               ))}
             </Stack>
 
-            <Field name="dueDate" validate={validateDate}>
-              {({
-                field,
-                form,
-              }: {
-                field: FieldInputProps<string>;
-                form: FormikState<{ title: string; dueDate: string }>;
-              }) => (
-                <FormControl
-                  isRequired
-                  isInvalid={
-                    form.errors.dueDate !== undefined && form.touched.dueDate
-                  }
-                >
+            <Field name="dueDate">
+              {() => (
+                <FormControl isRequired>
                   <FormLabel>Due date</FormLabel>
-                  <Input
-                    {...field}
-                    id="dueDate"
-                    value={field.value || ""}
-                    placeholder="MM/DD/YYYY"
+                  <DatePicker
+                    dateFormat="MM/dd/yyyy"
+                    selected={dateInput}
+                    customInput={<DateInput />}
+                    onChange={(date) => setDateInput(date! as Date)}
                   />
-                  <FormErrorMessage>{form.errors.dueDate}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>

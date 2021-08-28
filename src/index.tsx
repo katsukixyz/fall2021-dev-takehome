@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import reportWebVitals from "./reportWebVitals";
+import "react-datepicker/dist/react-datepicker.css";
 
 ReactDOM.render(
   <React.StrictMode>
