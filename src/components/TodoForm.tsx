@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { TodoItem } from "../types/types";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FieldInputProps, FormikState } from "formik";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   TagCloseButton,
   TagLabel,
   Stack,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 
 interface TodoFormProps {
@@ -22,6 +23,20 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
+  const validateDate = (value: string) => {
+    const regExp = /(0[1-9]|1[012])[\/](0[1-9]|[12][0-9]|3[01])[\/](19|20)\d\d/;
+    if (!regExp.test(value)) {
+      return "Please enter a valid date in the format MM/DD/YYYY";
+    }
+  };
+
+  const addTag = () => {
+    const newTags = [...tags];
+    newTags.push(tagInput);
+    setTags(newTags);
+    setTagInput("");
+  };
+
   return (
     <Box
       w={1000}
@@ -32,26 +47,26 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
     >
       <Formik
         initialValues={{}}
-        onSubmit={(values, actions) => {
-          console.log(values);
+        onSubmit={(values) => {
+          const formValues = {
+            ...values,
+            tags: tags,
+          };
         }}
       >
         {(props) => (
           <Form>
             <Field name="title">
-              {({ field, form }: any) => {
-                console.log(field);
-                return (
-                  <FormControl isRequired>
-                    <FormLabel>Title</FormLabel>
-                    <Input {...field} />
-                  </FormControl>
-                );
-              }}
+              {({ field }: { field: FieldInputProps<string> }) => (
+                <FormControl isRequired>
+                  <FormLabel>Title</FormLabel>
+                  <Input {...field} id="title" value={field.value || ""} />
+                </FormControl>
+              )}
             </Field>
 
             <FormLabel mt="2">Tags</FormLabel>
-            <Stack direction="row">
+            <Stack direction="row" mb="2">
               <Input
                 value={tagInput}
                 onChange={(event) => setTagInput(event.target.value)}
@@ -59,17 +74,14 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
               />
               <Button
                 onClick={() => {
-                  const newTags = [...tags];
-                  newTags.push(tagInput);
-                  setTags(newTags);
-                  setTagInput("");
+                  tagInput && addTag();
                 }}
               >
                 Add
               </Button>
             </Stack>
 
-            <Stack spacing={4} direction="row">
+            <Stack spacing={2} direction="row" mb="2">
               {tags.map((tag, i) => (
                 <Tag key={i} size="md" borderRadius="full">
                   <TagLabel>{tag}</TagLabel>
@@ -83,15 +95,35 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
                 </Tag>
               ))}
             </Stack>
-            <Field name="dueDate">
-              {({ field, form }: any) => (
-                <FormControl isRequired>
+
+            <Field name="dueDate" validate={validateDate}>
+              {({
+                field,
+                form,
+              }: {
+                field: FieldInputProps<string>;
+                form: FormikState<{ title: string; dueDate: string }>;
+              }) => (
+                <FormControl
+                  isRequired
+                  isInvalid={
+                    form.errors.dueDate !== undefined && form.touched.dueDate
+                  }
+                >
                   <FormLabel>Due date</FormLabel>
-                  <Input {...field} placeholder="MM/DD/YYYY" />
+                  <Input
+                    {...field}
+                    id="dueDate"
+                    value={field.value || ""}
+                    placeholder="MM/DD/YYYY"
+                  />
+                  <FormErrorMessage>{form.errors.dueDate}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-            <Button type="submit">Submit</Button>
+            <Button colorScheme="purple" type="submit" mt="2">
+              Submit
+            </Button>
           </Form>
         )}
       </Formik>
