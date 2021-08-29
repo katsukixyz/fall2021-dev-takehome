@@ -53,12 +53,18 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
       boxShadow="0 7px 30px -10px rgba(150,170,180,0.5);"
     >
       <Formik
-        initialValues={{}}
-        onSubmit={(values) => {
+        initialValues={{ title: "" }}
+        onSubmit={(values: { title: string }) => {
           const formValues = {
             ...values,
-            tags: tags,
+            dueDate: dateInput,
+            tagList: tags,
+            completed: false,
           };
+          console.log(formValues);
+          const newTodos = [...todos];
+          newTodos.push(formValues);
+          setTodos(newTodos);
         }}
       >
         {(props) => (
