@@ -34,7 +34,7 @@ const DateInput = forwardRef(
 
 const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
   const [tagInput, setTagInput] = useState("");
-  const [dateInput, setDateInput] = useState(new Date());
+  const [dateInput, setDateInput] = useState<Date | null>(null);
   const [tags, setTags] = useState<string[]>([]);
 
   const addTag = () => {
@@ -54,17 +54,23 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodos }) => {
     >
       <Formik
         initialValues={{ title: "" }}
-        onSubmit={(values: { title: string }) => {
+        onSubmit={(values: { title: string }, { resetForm }) => {
           const formValues = {
             ...values,
-            dueDate: dateInput,
+            id: todos.length,
+            dueDate: dateInput!,
             tagList: tags,
             completed: false,
           };
-          console.log(formValues);
           const newTodos = [...todos];
           newTodos.push(formValues);
           setTodos(newTodos);
+
+          //reset form values
+          resetForm();
+          setTagInput("");
+          setTags([]);
+          setDateInput(null);
         }}
       >
         {(props) => (

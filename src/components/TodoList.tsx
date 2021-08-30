@@ -14,16 +14,22 @@ import dayjs from "dayjs";
 interface TodoListProps {
   todos: TodoItem[];
   setTodos: React.Dispatch<React.SetStateAction<TodoItem[]>>;
+  filteredTodos: TodoItem[];
 }
 
-const TodoList: React.FC<TodoListProps> = ({ todos, setTodos }) => {
-  const changeChecked = (completed: boolean, listIndex: number) => {
+const TodoList: React.FC<TodoListProps> = ({
+  todos,
+  setTodos,
+  filteredTodos,
+}) => {
+  const changeChecked = (completed: boolean, id: number) => {
+    const indexToChange = todos.findIndex((todo) => todo.id === id);
     const newTodos = [...todos];
     const newTodoItem = {
-      ...todos[listIndex],
+      ...todos[indexToChange],
       completed: !completed,
     };
-    newTodos[listIndex] = newTodoItem;
+    newTodos[indexToChange] = newTodoItem;
     setTodos(newTodos);
   };
 
@@ -37,12 +43,13 @@ const TodoList: React.FC<TodoListProps> = ({ todos, setTodos }) => {
       boxShadow="0 7px 30px -10px rgba(150,170,180,0.5);"
       divider={<StackDivider borderColor="gray.300" />}
     >
-      {todos.map(({ title, dueDate, tagList, completed }, i: number) => (
-        <Box key={i}>
+      {filteredTodos.map(({ id, title, dueDate, tagList, completed }) => (
+        <Box key={id}>
           <Flex justifyContent="space-between">
             <Checkbox
               isChecked={completed}
-              onChange={() => changeChecked(completed, i)}
+              onChange={() => changeChecked(completed, id)}
+              colorScheme="purple"
             >
               {title}
             </Checkbox>
