@@ -7,15 +7,14 @@ import TodoList from "./components/TodoList";
 import { TodoItem } from "./types/types";
 import dayjs from "dayjs";
 
-function App() {
+const App: React.FC = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [sortDate, setSortDate] = useState(false);
   const [sortCompleted, setSortCompleted] = useState(false);
   const [filterTags, setFilterTags] = useState<FilterProps[]>([]);
 
   const filteredTodos = useMemo(() => {
-    console.log(todos);
-    let intermediateFilteredTodos = todos;
+    let intermediateFilteredTodos = [...todos];
     if (filterTags.length > 0) {
       intermediateFilteredTodos = intermediateFilteredTodos.filter((todo) =>
         filterTags.every((filterTag) => todo.tagList.includes(filterTag.value))
@@ -57,6 +56,6 @@ function App() {
       </Stack>
     </Center>
   );
-}
+};
 
 export default App;
