@@ -53,7 +53,7 @@ const TodoList: React.FC<TodoListProps> = ({
             >
               {title}
             </Checkbox>
-            <Text>{dayjs(dueDate).format("MM/DD/YYYY")}</Text>
+            <Text>{`by ${dayjs(dueDate).format("MM/DD/YYYY")}`}</Text>
           </Flex>
           <Stack direction="row" mt="1">
             {tagList.map((tag, i) => (

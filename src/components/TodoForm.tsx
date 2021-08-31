@@ -24,6 +24,7 @@ const DateInput = forwardRef(
     <Input
       ref={ref}
       id="dueDate"
+      isReadOnly
       value={value}
       onChange={onChange}
       onClick={onClick}
